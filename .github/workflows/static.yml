@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style>
+    .container {
+      display: flex;
+      align-items: flex-start;
+    }
+    .image-container {
+      margin-right: 20px;
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .text-container {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <h1></h1>
+  <div class="container">
+    <div class="image-container">
+      <img id="originalImage" src="Porteimg.png" alt="Imagem Anterior" width="600" height="700">
+      <canvas id="processedImage" width="600" height="700" style="display: none;"></canvas>
+    </div>
+    <div class="form-container">
+      <form id="dataForm">
+        Nome: <input type="text" name="nome"><br>
+        RG: <input type="text" name="rg"><br>
+        Tipo de Porte:
+        <select name="tipo_porte">
+          <option value="PORTE DE ARMA DE FOGO LEVE (HK-P7)">PORTE DE ARMA DE FOGO LEVE (HK-P7)</option>
+          <option value="PORTE DE ARMA DE FOGO LEVE (GLOCK)">PORTE DE ARMA DE FOGO LEVE (GLOCK)</option>
+          <option value="PORTE DE TEASER">PORTE DE TEASER</option>
+        </select><br>
+        Nome do Advogado: <input type="text" name="nome_advogado"><br>
+        RG do Advogado: <input type="text" name="rg_advogado"><br>
+        <button type="submit">Confirmar</button>
+      </form>
+      <div id="textContainer" class="text-container" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('dataForm');
+    const originalImage = document.getElementById('originalImage');
+    const processedImage = document.getElementById('processedImage');
+    const textContainer = document.getElementById('textContainer');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const nome = form.elements.nome.value;
+      const rg = form.elements.rg.value;
+      const tipoPorte = form.elements.tipo_porte.value;
+      const nomeAdvogado = form.elements.nome_advogado.value;
+      const rgAdvogado = form.elements.rg_advogado.value;
+      const nomeAdvogadoBaixo = nomeAdvogado;
+      const rgAdvogadoBaixo = rgAdvogado;
+
+      const ctx = processedImage.getContext('2d');
+      ctx.drawImage(originalImage, 0, 0, 600, 700);
+
+      ctx.font = '16px "Courier New"';
+      ctx.fillStyle = 'black';
+
+      const positions = {
+        nome: [85, 155],
+        rg: [470, 155],
+        tipoPorte: [85, 195],
+        nomeAdvogado: [85, 239],
+        rgAdvogado: [470, 238],
+        nomeAdvogadoBaixo: [220, 587],
+        rgAdvogadoBaixo: [355, 587],
+      };
+
+      for (const [field, position] of Object.entries(positions)) {
+        const value = eval(field);
+        ctx.fillText(value, position[0], position[1]);
+      }
+
+      const dataAtual = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+      const dataPosition = [220, 535];
+      ctx.fillText(dataAtual, dataPosition[0], dataPosition[1]);
+
+      originalImage.style.display = 'none';
+      processedImage.style.display = 'block';
+
+      textContainer.innerHTML = `
+        <p>Nome: ${nome}</p>
+        <p>RG: ${rg}</p>
+        <p>Tipo de Porte: ${tipoPorte}</p>
+        <p>Nome do Advogado: ${nomeAdvogado}</p>
+        <p>RG do Advogado: ${rgAdvogado}</p>
+      `;
+      textContainer.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
